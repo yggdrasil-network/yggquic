@@ -3,9 +3,9 @@ module github.com/yggdrasil-network/yggquic
 go 1.21.0
 
 require (
-	github.com/Arceliar/ironwood v0.0.0-20231104025256-ec84c695fc44
+	github.com/Arceliar/ironwood v0.0.0-20231126105342-ad38416a77c8
 	github.com/quic-go/quic-go v0.40.0
-	github.com/yggdrasil-network/yggdrasil-go v0.5.2
+	github.com/yggdrasil-network/yggdrasil-go v0.5.3
 )
 
 require (

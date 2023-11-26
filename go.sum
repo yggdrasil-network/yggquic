@@ -1,5 +1,5 @@
-github.com/Arceliar/ironwood v0.0.0-20231104025256-ec84c695fc44 h1:u328GAZGtL0W4oFWQs4YWHZT215LL6Lw9aYJxx76UVs=
-github.com/Arceliar/ironwood v0.0.0-20231104025256-ec84c695fc44/go.mod h1:5x7fWW0mshe9WQ1lvSMmmHBYC3BeHH9gpwW5tz7cbfw=
+github.com/Arceliar/ironwood v0.0.0-20231126105342-ad38416a77c8 h1:qyXiPZClVoe6QsbsiDP23g0Ze/MNXiHIAL/nVNfauH0=
+github.com/Arceliar/ironwood v0.0.0-20231126105342-ad38416a77c8/go.mod h1:5x7fWW0mshe9WQ1lvSMmmHBYC3BeHH9gpwW5tz7cbfw=
 github.com/Arceliar/phony v0.0.0-20220903101357-530938a4b13d h1:UK9fsWbWqwIQkMCz1CP+v5pGbsGoWAw6g4AyvMpm1EM=
 github.com/Arceliar/phony v0.0.0-20220903101357-530938a4b13d/go.mod h1:BCnxhRf47C/dy/e/D2pmB8NkB3dQVIrkD98b220rx5Q=
 github.com/bits-and-blooms/bitset v1.3.1/go.mod h1:gIdJ4wp64HaoK2YrL1Q5/N7Y16edYb8uY+O0FJTyyDA=
@@ -43,8 +43,8 @@ github.com/stretchr/testify v1.6.1 h1:hDPOHmpOpP40lSULcqw7IrRb/u7w6RpDC9399XyoNd
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/twmb/murmur3 v1.1.6 h1:mqrRot1BRxm+Yct+vavLMou2/iJt0tNVTTC0QoIjaZg=
 github.com/twmb/murmur3 v1.1.6/go.mod h1:Qq/R7NUyOfr65zD+6Q5IHKsJLwP7exErjN6lyyq3OSQ=
-github.com/yggdrasil-network/yggdrasil-go v0.5.2 h1:OEt5xi5iQDhK4yGjp0Bq9B0uZyQz741WIlorE8oVW1c=
-github.com/yggdrasil-network/yggdrasil-go v0.5.2/go.mod h1:oATGHx91oFqq3h3RKFU9qADFcO27TCf3CbQqrG2wzvU=
+github.com/yggdrasil-network/yggdrasil-go v0.5.3 h1:tfAajYmaiS1L9XevdEC1VUpScpgFfCW7/oEEWxdv5aM=
+github.com/yggdrasil-network/yggdrasil-go v0.5.3/go.mod h1:qRzHB8bKEIpd1pQVYoZ+SedJJTBG0X9sbyctWxQDDGA=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 go.uber.org/mock v0.3.0 h1:3mUxI1No2/60yUYax92Pt8eNOEecx2D3lcXZh2NEZJo=
 go.uber.org/mock v0.3.0/go.mod h1:a6FSlNadKUHUa9IP5Vyt1zh4fC7uAwxMutEAscFbkZc=
