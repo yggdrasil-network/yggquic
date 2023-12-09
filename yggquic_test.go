@@ -52,32 +52,36 @@ func TestQUICOverYggdrasil(t *testing.T) {
 		t.Parallel()
 
 		destination := hex.EncodeToString(node1.PublicKey())
-		c, err := quic2.Dial("yggdrasil", destination)
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Logf("Opened connection to %q", c.RemoteAddr().String())
-		if _, err = c.Write([]byte("Hello!")); err != nil {
-			t.Fatal(err)
-		}
-		if err = c.Close(); err != nil {
-			t.Fatal(err)
+		for i := 0; i < 5; i++ {
+			c, err := quic2.Dial("yggdrasil", destination)
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Logf("Opened connection to %q", c.RemoteAddr().String())
+			if _, err = c.Write([]byte("Hello!")); err != nil {
+				t.Fatal(err)
+			}
+			if err = c.Close(); err != nil {
+				t.Fatal(err)
+			}
 		}
 	})
 
 	t.Run("Listen", func(t *testing.T) {
 		t.Parallel()
 
-		c, err := quic1.Accept()
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Logf("Accepted connection from %q", c.RemoteAddr())
+		for i := 0; i < 5; i++ {
+			c, err := quic1.Accept()
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Logf("Accepted connection from %q", c.RemoteAddr())
 
-		b, err := io.ReadAll(c)
-		if err != nil {
-			t.Fatal(err)
+			b, err := io.ReadAll(c)
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Logf("Received: %s", b[:])
 		}
-		t.Logf("Received: %s", b[:])
 	})
 }
