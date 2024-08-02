@@ -55,8 +55,10 @@ type yggdrasilDial struct {
 func New(ygg *core.Core, cert tls.Certificate, qc *quic.Config) (*YggdrasilTransport, error) {
 	if qc == nil {
 		qc = &quic.Config{
-			HandshakeIdleTimeout: time.Second * 5,
-			MaxIdleTimeout:       time.Second * 60,
+			HandshakeIdleTimeout:    time.Second * 5,
+			MaxIdleTimeout:          time.Second * 60,
+			InitialPacketSize:       uint16(ygg.MTU()),
+			DisablePathMTUDiscovery: true,
 		}
 	}
 	tr := &YggdrasilTransport{
