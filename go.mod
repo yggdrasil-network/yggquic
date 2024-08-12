@@ -7,7 +7,7 @@ toolchain go1.22.4
 require (
 	github.com/Arceliar/ironwood v0.0.0-20240529054413-b8e59574e2b2
 	github.com/quic-go/quic-go v0.45.2
-	github.com/yggdrasil-network/yggdrasil-go v0.5.7
+	github.com/yggdrasil-network/yggdrasil-go v0.5.8
 )
 
 require (

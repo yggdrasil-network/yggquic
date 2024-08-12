@@ -41,8 +41,8 @@ github.com/stretchr/testify v1.6.1 h1:hDPOHmpOpP40lSULcqw7IrRb/u7w6RpDC9399XyoNd
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/twmb/murmur3 v1.1.6 h1:mqrRot1BRxm+Yct+vavLMou2/iJt0tNVTTC0QoIjaZg=
 github.com/twmb/murmur3 v1.1.6/go.mod h1:Qq/R7NUyOfr65zD+6Q5IHKsJLwP7exErjN6lyyq3OSQ=
-github.com/yggdrasil-network/yggdrasil-go v0.5.7 h1:dYGchGR4qKfVCrCta4DMINo//UxjvfV0JeLX+3zj570=
-github.com/yggdrasil-network/yggdrasil-go v0.5.7/go.mod h1:rqiISfR3QgICItCBj2cTeNJo7I6Zpt7dHpsdBRTUBUQ=
+github.com/yggdrasil-network/yggdrasil-go v0.5.8 h1:8vpSVcsu4+zFtDl80j38tSu1ExZEEBrGS2CBVf5tB1Y=
+github.com/yggdrasil-network/yggdrasil-go v0.5.8/go.mod h1:rqiISfR3QgICItCBj2cTeNJo7I6Zpt7dHpsdBRTUBUQ=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 go.uber.org/mock v0.4.0 h1:VcM4ZOtdbR4f6VXfiOpwpVJDL6lCReaZ6mw31wqh7KU=
 go.uber.org/mock v0.4.0/go.mod h1:a6FSlNadKUHUa9IP5Vyt1zh4fC7uAwxMutEAscFbkZc=
