@@ -5,9 +5,9 @@ go 1.21
 toolchain go1.22.4
 
 require (
-	github.com/Arceliar/ironwood v0.0.0-20241016082300-f6fb9da97a17
+	github.com/Arceliar/ironwood v0.0.0-20241122002527-75a6e82fa380
 	github.com/quic-go/quic-go v0.46.0
-	github.com/yggdrasil-network/yggdrasil-go v0.5.9
+	github.com/yggdrasil-network/yggdrasil-go v0.5.10
 )
 
 require (
@@ -21,12 +21,12 @@ require (
 	github.com/hjson/hjson-go/v4 v4.4.0 // indirect
 	github.com/onsi/ginkgo/v2 v2.9.5 // indirect
 	go.uber.org/mock v0.4.0 // indirect
-	golang.org/x/crypto v0.28.0 // indirect
+	golang.org/x/crypto v0.29.0 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/mod v0.19.0 // indirect
-	golang.org/x/net v0.30.0 // indirect
-	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.26.0 // indirect
-	golang.org/x/text v0.19.0 // indirect
+	golang.org/x/net v0.31.0 // indirect
+	golang.org/x/sync v0.9.0 // indirect
+	golang.org/x/sys v0.27.0 // indirect
+	golang.org/x/text v0.20.0 // indirect
 	golang.org/x/tools v0.23.0 // indirect
 )
