@@ -1,13 +1,13 @@
 module github.com/yggdrasil-network/yggquic
 
-go 1.21
+go 1.22
 
-toolchain go1.22.4
+toolchain go1.23.0
 
 require (
-	github.com/Arceliar/ironwood v0.0.0-20241210120540-9deb08d9f8f9
-	github.com/quic-go/quic-go v0.46.0
-	github.com/yggdrasil-network/yggdrasil-go v0.5.11
+	github.com/Arceliar/ironwood v0.0.0-20241213013129-743fe2fccbd3
+	github.com/quic-go/quic-go v0.48.2
+	github.com/yggdrasil-network/yggdrasil-go v0.5.12
 )
 
 require (
