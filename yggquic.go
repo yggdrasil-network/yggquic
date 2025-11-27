@@ -15,8 +15,9 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net"
-	"sync"
 	"time"
+
+	"github.com/neilalexander/generique/sync"
 
 	iwt "github.com/Arceliar/ironwood/types"
 	"github.com/quic-go/quic-go"
@@ -32,19 +33,19 @@ type YggdrasilTransport struct {
 	tlsConfig   *tls.Config
 	quicConfig  *quic.Config
 	incoming    chan *yggdrasilStream
-	connections sync.Map // string -> *yggdrasilConnection
-	dials       sync.Map // string -> *yggdrasilDial
+	connections sync.Map[string, *yggdrasilConnection]
+	dials       sync.Map[string, *yggdrasilDial]
 }
 
 type yggdrasilConnection struct {
 	context.Context
 	context.CancelFunc
-	quic.Connection
+	*quic.Conn
 }
 
 type yggdrasilStream struct {
 	*yggdrasilConnection
-	quic.Stream
+	*quic.Stream
 }
 
 type yggdrasilDial struct {
@@ -99,9 +100,7 @@ func (t *YggdrasilTransport) connectionAcceptLoop(ctx context.Context) {
 		ctx, cancel := context.WithCancel(t.ctx)
 		yc := &yggdrasilConnection{ctx, cancel, qc}
 		if eqc, ok := t.connections.Swap(host, yc); ok {
-			if eqc, ok := eqc.(*yggdrasilConnection); ok {
-				eqc.CancelFunc()
-			}
+			eqc.CancelFunc()
 		}
 
 		go t.streamAcceptLoop(yc)
@@ -110,7 +109,7 @@ func (t *YggdrasilTransport) connectionAcceptLoop(ctx context.Context) {
 		// too as we now have an open connection that we can open new
 		// streams on.
 		if dial, ok := t.dials.LoadAndDelete(host); ok {
-			dial.(*yggdrasilDial).CancelFunc()
+			dial.CancelFunc()
 		}
 	}
 }
@@ -148,7 +147,7 @@ func (t *YggdrasilTransport) DialContext(ctx context.Context, network, host stri
 	// Check if there is already a dial to this host in progress.
 	// If there is then we will wait for it.
 	if dial, ok := t.dials.Load(host); ok {
-		<-dial.(*yggdrasilDial).Done()
+		<-dial.Done()
 	}
 
 	// We might want to retrying once if part of the dial process fails,
@@ -176,7 +175,7 @@ retry:
 			copy(addr, k)
 
 			// Attempt to open a QUIC session.
-			var qc quic.Connection
+			var qc *quic.Conn
 			if qc, err = t.transport.Dial(dialctx, addr, t.tlsConfig, t.quicConfig); err != nil {
 				return nil, err
 			}
@@ -188,27 +187,23 @@ retry:
 				ctx, cancel := context.WithCancel(context.Background())
 				yc = &yggdrasilConnection{ctx, cancel, qc}
 				t.connections.Store(host, yc)
-				go t.streamAcceptLoop(yc.(*yggdrasilConnection))
+				go t.streamAcceptLoop(yc)
 			}
 		}
 	}
-	if yc, ok := yc.(*yggdrasilConnection); ok {
-		// We've either found a session or we successfully
-		// dialed a new one, so open a stream on it.
-		qs, err := yc.OpenStreamSync(ctx)
-		if err != nil {
-			// We failed to open a stream, so if this isn't a
-			// retry, then let's try opening a new connection.
-			if !retrying {
-				retrying = true
-				goto retry
-			}
-			return nil, err
+	// We've either found a session or we successfully
+	// dialed a new one, so open a stream on it.
+	qs, err := yc.OpenStreamSync(ctx)
+	if err != nil {
+		// We failed to open a stream, so if this isn't a
+		// retry, then let's try opening a new connection.
+		if !retrying {
+			retrying = true
+			goto retry
 		}
-		return &yggdrasilStream{yc, qs}, err
+		return nil, err
 	}
-	// We failed to open a session.
-	return nil, net.ErrClosed
+	return &yggdrasilStream{yc, qs}, err
 }
 
 func (t *YggdrasilTransport) Accept() (net.Conn, error) {
