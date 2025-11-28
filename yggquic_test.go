@@ -38,11 +38,11 @@ func TestQUICOverYggdrasil(t *testing.T) {
 	go node2.HandleConn(node1.PublicKey(), r, 0) // nolint:errcheck
 
 	// Create QUIC over Yggdrasil endpoints.
-	quic1, err := New(node1, *cfg1.Certificate, nil)
+	quic1, err := New(node1, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	quic2, err := New(node2, *cfg2.Certificate, nil)
+	quic2, err := New(node2, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

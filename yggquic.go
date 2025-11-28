@@ -11,9 +11,13 @@ package yggquic
 import (
 	"context"
 	"crypto/ed25519"
+	"crypto/rand"
 	"crypto/tls"
+	"crypto/x509"
+	"crypto/x509/pkix"
 	"encoding/hex"
 	"fmt"
+	"math/big"
 	"net"
 	"time"
 
@@ -53,7 +57,7 @@ type yggdrasilDial struct {
 	context.CancelFunc
 }
 
-func New(ygg *core.Core, cert tls.Certificate, qc *quic.Config) (*YggdrasilTransport, error) {
+func New(ygg *core.Core, qc *quic.Config) (*YggdrasilTransport, error) {
 	if qc == nil {
 		qc = &quic.Config{
 			HandshakeIdleTimeout:    time.Second * 5,
@@ -62,11 +66,35 @@ func New(ygg *core.Core, cert tls.Certificate, qc *quic.Config) (*YggdrasilTrans
 			DisablePathMTUDiscovery: true,
 		}
 	}
+
+	privateKey := ygg.PrivateKey()
+	publicKey := ygg.PublicKey()
+
+	cert := &x509.Certificate{
+		SerialNumber: big.NewInt(time.Now().Unix()),
+		Subject: pkix.Name{
+			CommonName: hex.EncodeToString(publicKey),
+		},
+		NotBefore:             time.Now(),
+		NotAfter:              time.Date(9999, time.December, 31, 23, 59, 59, 0, time.UTC),
+		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth, x509.ExtKeyUsageClientAuth},
+		BasicConstraintsValid: true,
+	}
+	certbytes, err := x509.CreateCertificate(rand.Reader, cert, cert, publicKey, privateKey)
+	if err != nil {
+		return nil, err
+	}
+
 	tr := &YggdrasilTransport{
 		tlsConfig: &tls.Config{
-			ServerName:         hex.EncodeToString(ygg.PublicKey()),
-			Certificates:       []tls.Certificate{cert},
+			ServerName:         hex.EncodeToString(publicKey),
+			ClientAuth:         tls.RequireAnyClientCert,
 			InsecureSkipVerify: true,
+			Certificates: []tls.Certificate{{
+				Certificate: [][]byte{certbytes},
+				PrivateKey:  privateKey,
+			}},
 		},
 		quicConfig: qc,
 		transport: &quic.Transport{
@@ -77,7 +105,6 @@ func New(ygg *core.Core, cert tls.Certificate, qc *quic.Config) (*YggdrasilTrans
 	}
 	tr.ctx, tr.cancel = context.WithCancel(context.Background())
 
-	var err error
 	if tr.listener, err = tr.transport.Listen(tr.tlsConfig, tr.quicConfig); err != nil {
 		return nil, fmt.Errorf("quic.Listen: %w", err)
 	}
@@ -93,12 +120,19 @@ func (t *YggdrasilTransport) connectionAcceptLoop(ctx context.Context) {
 			return
 		}
 
+		qstate := qc.ConnectionState()
+		if !verifyPeer(qc.RemoteAddr(), qstate.TLS.PeerCertificates) {
+			qc.CloseWithError(0, "Peer verification failed")
+			continue
+		}
+
+		ctx, cancel := context.WithCancel(t.ctx)
+		yc := &yggdrasilConnection{ctx, cancel, qc}
+
 		// If there's already an open connection for this node then we
 		// will want to shut down the existing one and replace it with
 		// this one.
 		host := qc.RemoteAddr().String()
-		ctx, cancel := context.WithCancel(t.ctx)
-		yc := &yggdrasilConnection{ctx, cancel, qc}
 		if eqc, ok := t.connections.Swap(host, yc); ok {
 			eqc.CancelFunc()
 		}
@@ -180,6 +214,13 @@ retry:
 				return nil, err
 			}
 
+			// Check the peer's identity against their source address.
+			qstate := qc.ConnectionState()
+			if !verifyPeer(addr, qstate.TLS.PeerCertificates) {
+				qc.CloseWithError(0, "Peer verification failed")
+				return nil, fmt.Errorf("peer verification failed")
+			}
+
 			// If we succeeded then we'll store our QUIC connection so
 			// that the next dial can open a stream on it directly. Start
 			// the accept loop so that streams can be accepted.
@@ -219,4 +260,17 @@ func (t *YggdrasilTransport) Close() error {
 		return err
 	}
 	return t.yggdrasil.Close()
+}
+
+func verifyPeer(remote net.Addr, cert []*x509.Certificate) bool {
+	if len(cert) != 1 {
+		return false
+	}
+	remotestr := remote.String()
+	switch cert[0].PublicKeyAlgorithm {
+	case x509.Ed25519:
+		return hex.EncodeToString(cert[0].PublicKey.(ed25519.PublicKey)) == remotestr
+	default:
+		return false
+	}
 }
